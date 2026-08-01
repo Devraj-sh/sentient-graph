@@ -286,8 +286,11 @@ export const getSourceLink = createServerFn({ method: "POST" })
     z.object({ storagePath: z.string().min(1).max(400) }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    const db = context.supabase;
-    const { data: signed, error } = await db.storage
+    // Storage paths are namespaced by owner; refuse anything outside the caller's folder.
+    if (!data.storagePath.startsWith(`${context.userId}/`)) {
+      throw new Error("Could not create a download link.");
+    }
+    const { data: signed, error } = await context.supabase.storage
       .from("documents")
       .createSignedUrl(data.storagePath, 300);
     if (error || !signed) throw new Error("Could not create a download link.");

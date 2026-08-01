@@ -184,7 +184,7 @@ function IngestPage() {
           if (files.length) void handleFiles(files);
         }}
         onClick={() => inputRef.current?.click()}
-        className={`glass-card flex cursor-pointer flex-col items-center justify-center px-6 py-14 text-center transition-colors ${
+        className={`glass-card rise-in hover-lift flex cursor-pointer flex-col items-center justify-center px-6 py-14 text-center transition-all duration-300 ${
           dragging ? "border-primary/60 bg-primary/5" : ""
         }`}
       >
@@ -216,7 +216,7 @@ function IngestPage() {
       </div>
 
       {active.length ? (
-        <section className="glass-card mt-4 p-5">
+        <section className="glass-card rise-in hover-lift mt-4 p-5">
           <h2 className="text-sm font-semibold">Pipeline</h2>
           <ul className="mt-3 space-y-3">
             {active.map((item) => (
@@ -263,7 +263,7 @@ function IngestPage() {
         </section>
       ) : null}
 
-      <section className="glass-card mt-4 overflow-hidden">
+      <section className="glass-card rise-in mt-4 overflow-hidden">
         <div className="border-b border-border/60 px-5 py-4">
           <h2 className="text-sm font-semibold">Corpus</h2>
           <p className="text-xs text-muted-foreground">

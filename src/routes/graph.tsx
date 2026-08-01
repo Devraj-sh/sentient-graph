@@ -119,7 +119,7 @@ function GraphPage() {
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_320px]">
-        <div className="glass-card overflow-hidden">
+        <div className="glass-card rise-in overflow-hidden">
           {nodes.length ? (
             <GraphCanvas
               nodes={nodes}
@@ -134,7 +134,7 @@ function GraphPage() {
           )}
         </div>
 
-        <aside className="glass-card h-fit p-5">
+        <aside className="glass-card rise-in hover-lift h-fit p-5">
           {selectedEntity ? (
             <div>
               <span

@@ -150,7 +150,7 @@ export type GeneratedAnswer = {
   usedCitations: number[];
 };
 
-const ANSWER_SYSTEM = `You are ComplyGraph, an enterprise compliance analyst.
+const ANSWER_SYSTEM = `You are Lumen, an enterprise compliance analyst.
 You answer ONLY from the numbered evidence passages and graph facts supplied to you.
 
 Hard rules:

@@ -29,15 +29,15 @@ export function AppShell({
   actions?: ReactNode;
 }) {
   return (
-    <div className="grid-backdrop min-h-screen text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-[1600px]">
-        <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border/60 px-4 py-6 lg:flex">
+        <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border px-4 py-6 lg:flex">
           <Link to="/" className="mb-8 flex items-center gap-3 px-2">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/30">
-              <Activity className="size-5 text-primary" />
+            <span className="flex size-9 items-center justify-center rounded-xl bg-primary">
+              <Activity className="size-4 text-primary-foreground" />
             </span>
             <span className="leading-tight">
-              <span className="block text-sm font-semibold tracking-tight">ComplyGraph</span>
+              <span className="block text-sm font-semibold tracking-tight">Lumen</span>
               <span className="block text-[11px] text-muted-foreground">
                 GraphRAG Compliance
               </span>
@@ -50,9 +50,9 @@ export function AppShell({
                 key={item.to}
                 to={item.to}
                 activeOptions={{ exact: item.to === "/" }}
-                className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+                className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                 activeProps={{
-                  className: "bg-secondary text-foreground ring-1 ring-border",
+                  className: "bg-secondary text-foreground",
                 }}
               >
                 <item.icon className="size-4" />
@@ -61,14 +61,14 @@ export function AppShell({
             ))}
           </nav>
 
-          <div className="mt-auto rounded-xl border border-border/60 bg-card/40 p-3 text-[11px] leading-relaxed text-muted-foreground">
+          <div className="mt-auto rounded-xl border border-border bg-card p-3 text-[11px] leading-relaxed text-muted-foreground">
             Answers are grounded in your uploaded documents. Anything unsupported by
             retrieved evidence is refused by the hallucination guard.
           </div>
         </aside>
 
         <main className="min-w-0 flex-1">
-          <header className="sticky top-0 z-20 border-b border-border/60 bg-background/70 px-6 py-4 backdrop-blur-xl">
+          <header className="sticky top-0 z-20 border-b border-border bg-background/85 px-6 py-4 backdrop-blur">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h1 className="text-lg font-semibold tracking-tight">{title}</h1>

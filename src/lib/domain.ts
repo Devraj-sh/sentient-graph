@@ -37,23 +37,23 @@ export const RELATIONSHIP_TYPES = [
 
 /** Palette keys resolve to CSS variables declared in styles.css. */
 export const ENTITY_COLORS: Record<string, string> = {
-  Person: "oklch(0.76 0.13 187)",
-  Organization: "oklch(0.7 0.14 250)",
-  Vendor: "oklch(0.72 0.16 300)",
-  Department: "oklch(0.78 0.12 210)",
-  Policy: "oklch(0.8 0.15 78)",
-  Law: "oklch(0.82 0.13 100)",
-  Rule: "oklch(0.79 0.11 120)",
-  Document: "oklch(0.72 0.04 250)",
-  Amount: "oklch(0.74 0.15 155)",
-  Date: "oklch(0.68 0.06 240)",
-  Country: "oklch(0.7 0.1 200)",
-  Asset: "oklch(0.73 0.1 330)",
-  Risk: "oklch(0.66 0.2 22)",
+  Person: "oklch(0.55 0.11 200)",
+  Organization: "oklch(0.5 0.13 258)",
+  Vendor: "oklch(0.52 0.14 305)",
+  Department: "oklch(0.56 0.1 215)",
+  Policy: "oklch(0.6 0.13 70)",
+  Law: "oklch(0.58 0.11 100)",
+  Rule: "oklch(0.58 0.09 130)",
+  Document: "oklch(0.55 0.03 260)",
+  Amount: "oklch(0.54 0.12 155)",
+  Date: "oklch(0.56 0.05 250)",
+  Country: "oklch(0.54 0.09 205)",
+  Asset: "oklch(0.55 0.1 335)",
+  Risk: "oklch(0.55 0.19 25)",
 };
 
 export function entityColor(type: string): string {
-  return ENTITY_COLORS[type] ?? "oklch(0.7 0.03 250)";
+  return ENTITY_COLORS[type] ?? "oklch(0.55 0.02 260)";
 }
 
 export const RISK_LEVELS = ["low", "medium", "high", "critical"] as const;

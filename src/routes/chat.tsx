@@ -15,13 +15,13 @@ import { documentsQuery } from "@/lib/queries";
 export const Route = createFileRoute("/chat")({
   head: () => ({
     meta: [
-      { title: "GraphRAG Chat — ComplyGraph" },
+      { title: "GraphRAG Chat — Lumen" },
       {
         name: "description",
         content:
           "Ask compliance questions and get answers grounded in cited passages and knowledge-graph facts.",
       },
-      { property: "og:title", content: "GraphRAG Chat — ComplyGraph" },
+      { property: "og:title", content: "GraphRAG Chat — Lumen" },
       {
         property: "og:description",
         content: "Cited, hallucination-guarded answers over your own compliance corpus.",
@@ -101,7 +101,7 @@ function ChatPage() {
               <h2 className="text-sm font-semibold">Ask about your corpus</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Every answer must be supported by retrieved passages. If the evidence is weak,
-                ComplyGraph refuses rather than guessing.
+                Lumen refuses rather than guessing.
               </p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 {SUGGESTIONS.map((suggestion) => (

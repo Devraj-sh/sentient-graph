@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 import type { AnswerResult, Citation } from "./domain";
 
 const PageSchema = z.object({ page: z.number().int().min(1), text: z.string() });
@@ -22,6 +24,7 @@ const MediaSchema = z.object({
  * Runs server-side so the AI key never reaches the browser.
  */
 export const extractMedia = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => MediaSchema.parse(input))
   .handler(async ({ data }) => {
     const { ocrImage, transcribeAudio } = await import("./ai.server");
@@ -41,13 +44,14 @@ export const extractMedia = createServerFn({ method: "POST" })
  * chunk -> embed -> store vectors -> extract entities/relationships/findings -> build graph.
  */
 export const ingestDocument = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => IngestSchema.parse(input))
-  .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async ({ data, context }) => {
+    const db = context.supabase;
     const { embedTexts } = await import("./ai.server");
     const { canonicalKey, chunkPages, extractGraph } = await import("./extract.server");
 
-    const { data: document, error: documentError } = await supabaseAdmin
+    const { data: document, error: documentError } = await db
       .from("documents")
       .select("id, name")
       .eq("id", data.documentId)
@@ -56,7 +60,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
     if (documentError || !document) throw new Error("Document not found.");
 
     const fail = async (message: string) => {
-      await supabaseAdmin
+      await db
         .from("documents")
         .update({ status: "failed", stage: "error", error: message })
         .eq("id", data.documentId);
@@ -67,7 +71,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
       if (!pages.length) throw new Error("No readable text was found in this file.");
 
       // 1. Chunk + embed
-      await supabaseAdmin
+      await db
         .from("documents")
         .update({ status: "processing", stage: "chunking", pages: pages.length })
         .eq("id", data.documentId);
@@ -75,16 +79,17 @@ export const ingestDocument = createServerFn({ method: "POST" })
       const chunks = chunkPages(pages);
       if (!chunks.length) throw new Error("Document produced no usable text chunks.");
 
-      await supabaseAdmin
+      await db
         .from("documents")
         .update({ stage: "embedding" })
         .eq("id", data.documentId);
 
       const vectors = await embedTexts(chunks.map((chunk) => chunk.content));
 
-      await supabaseAdmin.from("chunks").delete().eq("document_id", data.documentId);
-      const { error: chunkError } = await supabaseAdmin.from("chunks").insert(
+      await db.from("chunks").delete().eq("document_id", data.documentId);
+      const { error: chunkError } = await db.from("chunks").insert(
         chunks.map((chunk, index) => ({
+          owner_id: context.userId,
           document_id: data.documentId,
           page: chunk.page,
           idx: chunk.idx,
@@ -95,7 +100,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
       if (chunkError) throw new Error(`Storing embeddings failed: ${chunkError.message}`);
 
       // 2. Entity + relationship extraction
-      await supabaseAdmin
+      await db
         .from("documents")
         .update({ stage: "extracting" })
         .eq("id", data.documentId);
@@ -106,7 +111,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
       const extraction = await extractGraph(document.name, corpus);
 
       // 3. Merge entities into the graph by canonical key
-      await supabaseAdmin
+      await db
         .from("documents")
         .update({ stage: "graphing" })
         .eq("id", data.documentId);
@@ -115,14 +120,14 @@ export const ingestDocument = createServerFn({ method: "POST" })
 
       for (const entity of extraction.entities) {
         const key = canonicalKey(entity.type, entity.name);
-        const { data: existing } = await supabaseAdmin
+        const { data: existing } = await db
           .from("entities")
           .select("id, mentions, risk_level")
           .eq("canonical_key", key)
           .maybeSingle();
 
         if (existing) {
-          await supabaseAdmin
+          await db
             .from("entities")
             .update({
               mentions: (existing.mentions ?? 1) + 1,
@@ -133,9 +138,10 @@ export const ingestDocument = createServerFn({ method: "POST" })
           continue;
         }
 
-        const { data: inserted, error: insertError } = await supabaseAdmin
+        const { data: inserted, error: insertError } = await db
           .from("entities")
           .insert({
+            owner_id: context.userId,
             name: entity.name,
             type: entity.type,
             canonical_key: key,
@@ -159,8 +165,9 @@ export const ingestDocument = createServerFn({ method: "POST" })
         const targetId = idByName.get(relationship.target.toLowerCase());
         if (!sourceId || !targetId) continue;
 
-        const { error: relError } = await supabaseAdmin.from("relationships").upsert(
+        const { error: relError } = await db.from("relationships").upsert(
           {
+            owner_id: context.userId,
             source_id: sourceId,
             target_id: targetId,
             type: relationship.type,
@@ -175,8 +182,9 @@ export const ingestDocument = createServerFn({ method: "POST" })
       }
 
       if (extraction.findings.length) {
-        const { error: findingError } = await supabaseAdmin.from("findings").insert(
+        const { error: findingError } = await db.from("findings").insert(
           extraction.findings.map((finding) => ({
+            owner_id: context.userId,
             title: finding.title,
             detail: finding.detail,
             severity: finding.severity,
@@ -191,7 +199,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
         if (findingError) console.error("[ingest] findings insert failed", findingError);
       }
 
-      await supabaseAdmin
+      await db
         .from("documents")
         .update({ status: "ready", stage: "done", error: null, pages: pages.length })
         .eq("id", data.documentId);
@@ -218,12 +226,13 @@ const AskSchema = z.object({ question: z.string().trim().min(3).max(600) });
 
 /** GraphRAG question answering with citations, confidence and a hallucination guard. */
 export const askCompliance = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => AskSchema.parse(input))
-  .handler(async ({ data }): Promise<AnswerResult> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async ({ data, context }): Promise<AnswerResult> => {
+    const db = context.supabase;
     const { generateAnswer, retrieveEvidence } = await import("./retrieval.server");
 
-    const evidence = await retrieveEvidence(supabaseAdmin, data.question);
+    const evidence = await retrieveEvidence(db, data.question);
     const generated = await generateAnswer(data.question, evidence);
 
     const used = new Set(generated.usedCitations);
@@ -242,9 +251,10 @@ export const askCompliance = createServerFn({ method: "POST" })
           type: node.type,
         }));
 
-    const { data: saved, error } = await supabaseAdmin
+    const { data: saved, error } = await db
       .from("questions")
       .insert({
+        owner_id: context.userId,
         question: data.question,
         answer: generated.refused ? null : generated.answer,
         confidence: generated.confidence,
@@ -271,12 +281,13 @@ export const askCompliance = createServerFn({ method: "POST" })
 
 /** Creates a time-limited download link for a cited source document. */
 export const getSourceLink = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
     z.object({ storagePath: z.string().min(1).max(400) }).parse(input),
   )
-  .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: signed, error } = await supabaseAdmin.storage
+  .handler(async ({ data, context }) => {
+    const db = context.supabase;
+    const { data: signed, error } = await db.storage
       .from("documents")
       .createSignedUrl(data.storagePath, 300);
     if (error || !signed) throw new Error("Could not create a download link.");
@@ -284,14 +295,16 @@ export const getSourceLink = createServerFn({ method: "POST" })
   });
 
 /** Executive AI insights derived from the current knowledge graph. */
-export const generateInsights = createServerFn({ method: "POST" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+export const generateInsights = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+  const db = context.supabase;
   const { chatJson } = await import("./ai.server");
 
   const [{ data: entities }, { data: findings }, { data: relationships }] = await Promise.all([
-    supabaseAdmin.from("entities").select("name, type, risk_level, summary").limit(300),
-    supabaseAdmin.from("findings").select("title, detail, severity, category").limit(150),
-    supabaseAdmin.from("relationships").select("type").limit(500),
+    db.from("entities").select("name, type, risk_level, summary").limit(300),
+    db.from("findings").select("title, detail, severity, category").limit(150),
+    db.from("relationships").select("type").limit(500),
   ]);
 
   if (!entities?.length) {
@@ -333,4 +346,4 @@ export const generateInsights = createServerFn({ method: "POST" }).handler(async
     recommendations: result?.recommendations ?? [],
     topViolations: result?.topViolations ?? [],
   };
-});
+  });

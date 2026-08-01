@@ -97,7 +97,7 @@ function ChatPage() {
       <div className="mx-auto flex max-w-3xl flex-col">
         <div className="min-h-[52vh] space-y-6">
           {!turns.length ? (
-            <div className="glass-card p-6">
+            <div className="glass-card rise-in p-6">
               <h2 className="text-sm font-semibold">Ask about your corpus</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Every answer must be supported by retrieved passages. If the evidence is weak,
@@ -153,7 +153,7 @@ function ChatPage() {
             void submit(input);
           }}
         >
-          <div className="glass-card flex items-end gap-2 p-2">
+          <div className="glass-card flex items-end gap-2 p-2 transition-shadow focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-primary)_12%,transparent)]">
             <Textarea
               ref={textareaRef}
               value={input}
@@ -189,7 +189,7 @@ function AnswerBlock({
 
   if (result.refused) {
     return (
-      <div className="glass-card border-warning/40 p-4">
+      <div className="glass-card rise-in border-warning/40 p-4">
         <p className="flex items-center gap-2 text-sm font-medium text-warning">
           <ShieldAlert className="size-4" />
           Answer withheld by the hallucination guard
@@ -204,7 +204,7 @@ function AnswerBlock({
   }
 
   return (
-    <div className="glass-card p-4">
+    <div className="glass-card rise-in p-4">
       <div className="flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-xs text-success">
           <ShieldCheck className="size-4" />

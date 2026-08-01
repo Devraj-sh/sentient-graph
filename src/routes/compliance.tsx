@@ -106,7 +106,7 @@ function CompliancePage() {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_300px]">
-        <section className="glass-card overflow-hidden">
+        <section className="glass-card rise-in overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-4">
             <h2 className="text-sm font-semibold">Findings</h2>
             <div className="flex gap-1.5">
@@ -165,7 +165,7 @@ function CompliancePage() {
         </section>
 
         <aside className="space-y-4">
-          <section className="glass-card p-5">
+          <section className="glass-card rise-in hover-lift p-5">
             <h2 className="text-sm font-semibold">By category</h2>
             <ul className="mt-3 space-y-2">
               {categories.slice(0, 8).map(([category, count]) => (
@@ -180,7 +180,7 @@ function CompliancePage() {
             </ul>
           </section>
 
-          <section className="glass-card p-5">
+          <section className="glass-card rise-in hover-lift p-5">
             <h2 className="text-sm font-semibold">Answer audit trail</h2>
             <ul className="mt-3 space-y-2">
               {audits.slice(0, 10).map((item) => (

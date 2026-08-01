@@ -8,7 +8,7 @@ import { StatCard } from "@/components/StatCard";
 import { RISK_WEIGHT } from "@/lib/domain";
 import { documentsQuery, entitiesQuery, findingsQuery, questionsQuery } from "@/lib/queries";
 
-export const Route = createFileRoute("/compliance")({
+export const Route = createFileRoute("/_authenticated/compliance")({
   head: () => ({
     meta: [
       { title: "Compliance & Risk — Lumen" },

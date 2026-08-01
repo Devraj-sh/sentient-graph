@@ -22,6 +22,7 @@ export type Database = {
           embedding: string | null
           id: string
           idx: number
+          owner_id: string
           page: number
         }
         Insert: {
@@ -31,6 +32,7 @@ export type Database = {
           embedding?: string | null
           id?: string
           idx?: number
+          owner_id: string
           page?: number
         }
         Update: {
@@ -40,6 +42,7 @@ export type Database = {
           embedding?: string | null
           id?: string
           idx?: number
+          owner_id?: string
           page?: number
         }
         Relationships: [
@@ -60,6 +63,7 @@ export type Database = {
           kind: string
           mime_type: string | null
           name: string
+          owner_id: string
           pages: number
           size_bytes: number
           stage: string | null
@@ -73,6 +77,7 @@ export type Database = {
           kind?: string
           mime_type?: string | null
           name: string
+          owner_id: string
           pages?: number
           size_bytes?: number
           stage?: string | null
@@ -86,6 +91,7 @@ export type Database = {
           kind?: string
           mime_type?: string | null
           name?: string
+          owner_id?: string
           pages?: number
           size_bytes?: number
           stage?: string | null
@@ -103,6 +109,7 @@ export type Database = {
           mentions: number
           metadata: Json
           name: string
+          owner_id: string
           page: number | null
           risk_level: string
           summary: string | null
@@ -116,6 +123,7 @@ export type Database = {
           mentions?: number
           metadata?: Json
           name: string
+          owner_id: string
           page?: number | null
           risk_level?: string
           summary?: string | null
@@ -129,6 +137,7 @@ export type Database = {
           mentions?: number
           metadata?: Json
           name?: string
+          owner_id?: string
           page?: number | null
           risk_level?: string
           summary?: string | null
@@ -152,6 +161,7 @@ export type Database = {
           document_id: string | null
           entity_id: string | null
           id: string
+          owner_id: string
           page: number | null
           severity: string
           title: string
@@ -163,6 +173,7 @@ export type Database = {
           document_id?: string | null
           entity_id?: string | null
           id?: string
+          owner_id: string
           page?: number | null
           severity?: string
           title: string
@@ -174,6 +185,7 @@ export type Database = {
           document_id?: string | null
           entity_id?: string | null
           id?: string
+          owner_id?: string
           page?: number | null
           severity?: string
           title?: string
@@ -203,6 +215,7 @@ export type Database = {
           created_at: string
           graph_nodes: Json
           id: string
+          owner_id: string
           question: string
           reasoning: string | null
           refused: boolean
@@ -214,6 +227,7 @@ export type Database = {
           created_at?: string
           graph_nodes?: Json
           id?: string
+          owner_id: string
           question: string
           reasoning?: string | null
           refused?: boolean
@@ -225,6 +239,7 @@ export type Database = {
           created_at?: string
           graph_nodes?: Json
           id?: string
+          owner_id?: string
           question?: string
           reasoning?: string | null
           refused?: boolean
@@ -238,6 +253,7 @@ export type Database = {
           document_id: string | null
           evidence: string | null
           id: string
+          owner_id: string
           page: number | null
           source_id: string
           target_id: string
@@ -249,6 +265,7 @@ export type Database = {
           document_id?: string | null
           evidence?: string | null
           id?: string
+          owner_id: string
           page?: number | null
           source_id: string
           target_id: string
@@ -260,6 +277,7 @@ export type Database = {
           document_id?: string | null
           evidence?: string | null
           id?: string
+          owner_id?: string
           page?: number | null
           source_id?: string
           target_id?: string

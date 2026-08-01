@@ -28,7 +28,7 @@ import {
 } from "@/lib/parse-client";
 import { documentsQuery } from "@/lib/queries";
 
-export const Route = createFileRoute("/_authenticated/ingest")({
+export const Route = createFileRoute("/ingest")({
   head: () => ({
     meta: [
       { title: "Document Ingestion — Lumen" },

@@ -25,7 +25,7 @@ import {
   relationshipsQuery,
 } from "@/lib/queries";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Lumen — GraphRAG Compliance Intelligence" },

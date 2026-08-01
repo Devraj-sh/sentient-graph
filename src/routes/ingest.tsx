@@ -31,13 +31,13 @@ import { documentsQuery } from "@/lib/queries";
 export const Route = createFileRoute("/ingest")({
   head: () => ({
     meta: [
-      { title: "Document Ingestion — ComplyGraph" },
+      { title: "Document Ingestion — Lumen" },
       {
         name: "description",
         content:
-          "Upload contracts, policies, spreadsheets, scans and recordings; ComplyGraph parses, embeds and graphs them automatically.",
+          "Upload contracts, policies, spreadsheets, scans and recordings; Lumen parses, embeds and graphs them automatically.",
       },
-      { property: "og:title", content: "Document Ingestion — ComplyGraph" },
+      { property: "og:title", content: "Document Ingestion — Lumen" },
       {
         property: "og:description",
         content: "Parse, embed and graph enterprise compliance documents in one pass.",

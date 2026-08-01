@@ -37,7 +37,7 @@ export function AppShell({
               <Activity className="size-5 text-primary" />
             </span>
             <span className="leading-tight">
-              <span className="block text-sm font-semibold tracking-tight">ComplyGraph</span>
+              <span className="block text-sm font-semibold tracking-tight">Lumen</span>
               <span className="block text-[11px] text-muted-foreground">
                 GraphRAG Compliance
               </span>

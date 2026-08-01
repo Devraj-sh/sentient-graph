@@ -28,13 +28,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ComplyGraph — GraphRAG Compliance Intelligence" },
+      { title: "Lumen — GraphRAG Compliance Intelligence" },
       {
         name: "description",
         content:
           "Turn contracts, policies and reports into an auditable knowledge graph with cited, hallucination-guarded answers.",
       },
-      { property: "og:title", content: "ComplyGraph — GraphRAG Compliance Intelligence" },
+      { property: "og:title", content: "Lumen — GraphRAG Compliance Intelligence" },
       {
         property: "og:description",
         content:

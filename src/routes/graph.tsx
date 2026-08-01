@@ -12,13 +12,13 @@ import { entitiesQuery, relationshipsQuery } from "@/lib/queries";
 export const Route = createFileRoute("/graph")({
   head: () => ({
     meta: [
-      { title: "Knowledge Graph — ComplyGraph" },
+      { title: "Knowledge Graph — Lumen" },
       {
         name: "description",
         content:
           "Explore people, vendors, policies and risks and the relationships extracted from your documents.",
       },
-      { property: "og:title", content: "Knowledge Graph — ComplyGraph" },
+      { property: "og:title", content: "Knowledge Graph — Lumen" },
       {
         property: "og:description",
         content: "An interactive, force-directed view of your compliance knowledge graph.",

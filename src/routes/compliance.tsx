@@ -11,13 +11,13 @@ import { documentsQuery, entitiesQuery, findingsQuery, questionsQuery } from "@/
 export const Route = createFileRoute("/compliance")({
   head: () => ({
     meta: [
-      { title: "Compliance & Risk — ComplyGraph" },
+      { title: "Compliance & Risk — Lumen" },
       {
         name: "description",
         content:
           "Track compliance findings by severity and category, and audit every answer the system has produced.",
       },
-      { property: "og:title", content: "Compliance & Risk — ComplyGraph" },
+      { property: "og:title", content: "Compliance & Risk — Lumen" },
       {
         property: "og:description",
         content: "Severity-ranked findings and a full audit trail of grounded answers.",

@@ -1,4 +1,4 @@
-# ComplyGraph — GraphRAG Compliance Intelligence
+# Lumen — GraphRAG Compliance Intelligence
 
 An enterprise compliance platform that ingests documents, extracts entities and relationships with AI, builds a knowledge graph, and answers compliance questions with citations and confidence — refusing to answer when evidence is weak.
 

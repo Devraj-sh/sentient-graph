@@ -9,183 +9,123 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
-import { Route as AuthenticatedComplianceRouteImport } from './routes/_authenticated/compliance'
-import { Route as AuthenticatedGraphRouteImport } from './routes/_authenticated/graph'
-import { Route as AuthenticatedIngestRouteImport } from './routes/_authenticated/ingest'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as ComplianceRouteImport } from './routes/compliance'
+import { Route as GraphRouteImport } from './routes/graph'
+import { Route as IngestRouteImport } from './routes/ingest'
 
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
+const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedComplianceRoute = AuthenticatedComplianceRouteImport.update({
+const ComplianceRoute = ComplianceRouteImport.update({
   id: '/compliance',
   path: '/compliance',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedGraphRoute = AuthenticatedGraphRouteImport.update({
+const GraphRoute = GraphRouteImport.update({
   id: '/graph',
   path: '/graph',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedIngestRoute = AuthenticatedIngestRouteImport.update({
+const IngestRoute = IngestRouteImport.update({
   id: '/ingest',
   path: '/ingest',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
-  '/auth': typeof AuthRoute
-  '/chat': typeof AuthenticatedChatRoute
-  '/compliance': typeof AuthenticatedComplianceRoute
-  '/graph': typeof AuthenticatedGraphRoute
-  '/ingest': typeof AuthenticatedIngestRoute
+  '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/compliance': typeof ComplianceRoute
+  '/graph': typeof GraphRoute
+  '/ingest': typeof IngestRoute
 }
 export interface FileRoutesByTo {
-  '/auth': typeof AuthRoute
-  '/chat': typeof AuthenticatedChatRoute
-  '/compliance': typeof AuthenticatedComplianceRoute
-  '/graph': typeof AuthenticatedGraphRoute
-  '/ingest': typeof AuthenticatedIngestRoute
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/compliance': typeof ComplianceRoute
+  '/graph': typeof GraphRoute
+  '/ingest': typeof IngestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
-  '/_authenticated/chat': typeof AuthenticatedChatRoute
-  '/_authenticated/compliance': typeof AuthenticatedComplianceRoute
-  '/_authenticated/graph': typeof AuthenticatedGraphRoute
-  '/_authenticated/ingest': typeof AuthenticatedIngestRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/compliance': typeof ComplianceRoute
+  '/graph': typeof GraphRoute
+  '/ingest': typeof IngestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/chat' | '/compliance' | '/graph' | '/ingest'
+  fullPaths: '/' | '/chat' | '/compliance' | '/graph' | '/ingest'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/chat' | '/compliance' | '/graph' | '/ingest' | '/'
-  id:
-    | '__root__'
-    | '/_authenticated'
-    | '/auth'
-    | '/_authenticated/chat'
-    | '/_authenticated/compliance'
-    | '/_authenticated/graph'
-    | '/_authenticated/ingest'
-    | '/_authenticated/'
+  to: '/' | '/chat' | '/compliance' | '/graph' | '/ingest'
+  id: '__root__' | '/' | '/chat' | '/compliance' | '/graph' | '/ingest'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  IndexRoute: typeof IndexRoute
+  ChatRoute: typeof ChatRoute
+  ComplianceRoute: typeof ComplianceRoute
+  GraphRoute: typeof GraphRoute
+  IngestRoute: typeof IngestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/': {
-      id: '/_authenticated/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/chat': {
-      id: '/_authenticated/chat'
+    '/chat': {
+      id: '/chat'
       path: '/chat'
       fullPath: '/chat'
-      preLoaderRoute: typeof AuthenticatedChatRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/compliance': {
-      id: '/_authenticated/compliance'
+    '/compliance': {
+      id: '/compliance'
       path: '/compliance'
       fullPath: '/compliance'
-      preLoaderRoute: typeof AuthenticatedComplianceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof ComplianceRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/graph': {
-      id: '/_authenticated/graph'
+    '/graph': {
+      id: '/graph'
       path: '/graph'
       fullPath: '/graph'
-      preLoaderRoute: typeof AuthenticatedGraphRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof GraphRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/ingest': {
-      id: '/_authenticated/ingest'
+    '/ingest': {
+      id: '/ingest'
       path: '/ingest'
       fullPath: '/ingest'
-      preLoaderRoute: typeof AuthenticatedIngestRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof IngestRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedChatRoute: typeof AuthenticatedChatRoute
-  AuthenticatedComplianceRoute: typeof AuthenticatedComplianceRoute
-  AuthenticatedGraphRoute: typeof AuthenticatedGraphRoute
-  AuthenticatedIngestRoute: typeof AuthenticatedIngestRoute
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedChatRoute: AuthenticatedChatRoute,
-  AuthenticatedComplianceRoute: AuthenticatedComplianceRoute,
-  AuthenticatedGraphRoute: AuthenticatedGraphRoute,
-  AuthenticatedIngestRoute: AuthenticatedIngestRoute,
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-}
-
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  IndexRoute: IndexRoute,
+  ChatRoute: ChatRoute,
+  ComplianceRoute: ComplianceRoute,
+  GraphRoute: GraphRoute,
+  IngestRoute: IngestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

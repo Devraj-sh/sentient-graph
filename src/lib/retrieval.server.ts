@@ -1,9 +1,12 @@
 import { chatJson, embedText } from "./ai.server";
 import { CONFIDENCE_THRESHOLD, type Citation } from "./domain";
 
-type AdminClient = Awaited<
-  typeof import("@/integrations/supabase/client.server")
->["supabaseAdmin"];
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+import type { Database } from "@/integrations/supabase/types";
+
+/** Any Supabase client; callers pass the request-scoped, RLS-enforcing client. */
+type Db = SupabaseClient<Database>;
 
 export type GraphNode = { id: string; name: string; type: string; riskLevel: string };
 
@@ -19,7 +22,7 @@ export type Evidence = {
  * merged and ranked into a single evidence bundle.
  */
 export async function retrieveEvidence(
-  db: AdminClient,
+  db: Db,
   question: string,
 ): Promise<Evidence> {
   const queryEmbedding = await embedText(question);

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { ENTITY_TYPES, entityColor } from "@/lib/domain";
 import { entitiesQuery, relationshipsQuery } from "@/lib/queries";
 
-export const Route = createFileRoute("/graph")({
+export const Route = createFileRoute("/_authenticated/graph")({
   head: () => ({
     meta: [
       { title: "Knowledge Graph — Lumen" },

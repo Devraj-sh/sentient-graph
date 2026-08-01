@@ -1,8 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
 import type { AnswerResult, Citation } from "./domain";
 
 const PageSchema = z.object({ page: z.number().int().min(1), text: z.string() });
@@ -24,7 +22,6 @@ const MediaSchema = z.object({
  * Runs server-side so the AI key never reaches the browser.
  */
 export const extractMedia = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => MediaSchema.parse(input))
   .handler(async ({ data }) => {
     const { ocrImage, transcribeAudio } = await import("./ai.server");
@@ -44,10 +41,9 @@ export const extractMedia = createServerFn({ method: "POST" })
  * chunk -> embed -> store vectors -> extract entities/relationships/findings -> build graph.
  */
 export const ingestDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => IngestSchema.parse(input))
-  .handler(async ({ data, context }) => {
-    const db = context.supabase;
+  .handler(async ({ data }) => {
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
     const { embedTexts } = await import("./ai.server");
     const { canonicalKey, chunkPages, extractGraph } = await import("./extract.server");
 
@@ -89,8 +85,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
       await db.from("chunks").delete().eq("document_id", data.documentId);
       const { error: chunkError } = await db.from("chunks").insert(
         chunks.map((chunk, index) => ({
-          owner_id: context.userId,
-          document_id: data.documentId,
+            document_id: data.documentId,
           page: chunk.page,
           idx: chunk.idx,
           content: chunk.content,
@@ -141,8 +136,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
         const { data: inserted, error: insertError } = await db
           .from("entities")
           .insert({
-            owner_id: context.userId,
-            name: entity.name,
+                name: entity.name,
             type: entity.type,
             canonical_key: key,
             risk_level: entity.riskLevel,
@@ -167,8 +161,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
 
         const { error: relError } = await db.from("relationships").upsert(
           {
-            owner_id: context.userId,
-            source_id: sourceId,
+                source_id: sourceId,
             target_id: targetId,
             type: relationship.type,
             confidence: relationship.confidence,
@@ -184,8 +177,7 @@ export const ingestDocument = createServerFn({ method: "POST" })
       if (extraction.findings.length) {
         const { error: findingError } = await db.from("findings").insert(
           extraction.findings.map((finding) => ({
-            owner_id: context.userId,
-            title: finding.title,
+                title: finding.title,
             detail: finding.detail,
             severity: finding.severity,
             category: finding.category,
@@ -226,10 +218,9 @@ const AskSchema = z.object({ question: z.string().trim().min(3).max(600) });
 
 /** GraphRAG question answering with citations, confidence and a hallucination guard. */
 export const askCompliance = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => AskSchema.parse(input))
-  .handler(async ({ data, context }): Promise<AnswerResult> => {
-    const db = context.supabase;
+  .handler(async ({ data }): Promise<AnswerResult> => {
+    const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
     const { generateAnswer, retrieveEvidence } = await import("./retrieval.server");
 
     const evidence = await retrieveEvidence(db, data.question);
@@ -254,7 +245,6 @@ export const askCompliance = createServerFn({ method: "POST" })
     const { data: saved, error } = await db
       .from("questions")
       .insert({
-        owner_id: context.userId,
         question: data.question,
         answer: generated.refused ? null : generated.answer,
         confidence: generated.confidence,
@@ -281,16 +271,12 @@ export const askCompliance = createServerFn({ method: "POST" })
 
 /** Creates a time-limited download link for a cited source document. */
 export const getSourceLink = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
     z.object({ storagePath: z.string().min(1).max(400) }).parse(input),
   )
-  .handler(async ({ data, context }) => {
-    // Storage paths are namespaced by owner; refuse anything outside the caller's folder.
-    if (!data.storagePath.startsWith(`${context.userId}/`)) {
-      throw new Error("Could not create a download link.");
-    }
-    const { data: signed, error } = await context.supabase.storage
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
       .from("documents")
       .createSignedUrl(data.storagePath, 300);
     if (error || !signed) throw new Error("Could not create a download link.");
@@ -299,9 +285,8 @@ export const getSourceLink = createServerFn({ method: "POST" })
 
 /** Executive AI insights derived from the current knowledge graph. */
 export const generateInsights = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-  const db = context.supabase;
+  .handler(async () => {
+  const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
   const { chatJson } = await import("./ai.server");
 
   const [{ data: entities }, { data: findings }, { data: relationships }] = await Promise.all([

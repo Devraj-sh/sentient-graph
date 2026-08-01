@@ -1,17 +1,13 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import {
   Activity,
   LayoutDashboard,
-  LogOut,
   MessagesSquare,
   Network,
   ShieldAlert,
   Upload,
 } from "lucide-react";
 import type { ReactNode } from "react";
-
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -32,9 +28,6 @@ export function AppShell({
   subtitle?: string;
   actions?: ReactNode;
 }) {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-[1600px]">
@@ -70,28 +63,9 @@ export function AppShell({
             ))}
           </nav>
 
-          <div className="mt-auto space-y-3">
-            <div className="rise-in rounded-xl border border-border bg-card p-3 text-[11px] leading-relaxed text-muted-foreground transition-colors duration-300 hover:border-primary/25">
-              Answers are grounded in your uploaded documents. Anything unsupported by
-              retrieved evidence is refused by the hallucination guard.
-            </div>
-            <div className="flex items-center justify-between gap-2 px-1">
-              <span className="min-w-0 truncate text-[11px] text-muted-foreground">
-                {user?.email ?? ""}
-              </span>
-              <button
-                type="button"
-                aria-label="Sign out"
-                className="press flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  void navigate({ to: "/auth" });
-                }}
-              >
-                <LogOut className="size-3.5" />
-                Sign out
-              </button>
-            </div>
+          <div className="rise-in mt-auto rounded-xl border border-border bg-card p-3 text-[11px] leading-relaxed text-muted-foreground transition-colors duration-300 hover:border-primary/25">
+            Answers are grounded in your uploaded documents. Anything unsupported by
+            retrieved evidence is refused by the hallucination guard.
           </div>
         </aside>
 

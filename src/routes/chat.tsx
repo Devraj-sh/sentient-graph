@@ -12,7 +12,7 @@ import { askCompliance, getSourceLink } from "@/lib/compliance.functions";
 import type { AnswerResult } from "@/lib/domain";
 import { documentsQuery } from "@/lib/queries";
 
-export const Route = createFileRoute("/_authenticated/chat")({
+export const Route = createFileRoute("/chat")({
   head: () => ({
     meta: [
       { title: "GraphRAG Chat — Lumen" },

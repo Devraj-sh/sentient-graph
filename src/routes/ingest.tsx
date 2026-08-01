@@ -28,7 +28,7 @@ import {
 } from "@/lib/parse-client";
 import { documentsQuery } from "@/lib/queries";
 
-export const Route = createFileRoute("/_authenticated/ingest")({
+export const Route = createFileRoute("/ingest")({
   head: () => ({
     meta: [
       { title: "Document Ingestion — Lumen" },
@@ -63,10 +63,6 @@ function IngestPage() {
 
   const handleFiles = useCallback(
     async (files: File[]) => {
-      const { data: auth } = await supabase.auth.getUser();
-      const userId = auth.user?.id;
-      if (!userId) return;
-
       for (const file of files) {
         const kind = detectKind(file);
         const update = (stage: string, error?: string) =>
@@ -77,8 +73,7 @@ function IngestPage() {
 
         update("uploading");
 
-        // Files live in a per-owner folder; storage policies enforce the prefix.
-        const storagePath = `${userId}/${crypto.randomUUID()}-${sanitizeFilename(file.name)}`;
+        const storagePath = `${crypto.randomUUID()}-${sanitizeFilename(file.name)}`;
         const { error: uploadError } = await supabase.storage
           .from("documents")
           .upload(storagePath, file, { upsert: false });
@@ -91,7 +86,6 @@ function IngestPage() {
         const { data: inserted, error: insertError } = await supabase
           .from("documents")
           .insert({
-            owner_id: userId,
             name: file.name,
             kind,
             mime_type: file.type || null,

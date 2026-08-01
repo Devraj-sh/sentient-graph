@@ -94,6 +94,7 @@ function Dashboard() {
           value={readyDocs.length}
           hint={`${documents.data?.length ?? 0} uploaded`}
           icon={FileText}
+          delay={0}
         />
         <StatCard
           label="Entities"
@@ -101,12 +102,14 @@ function Dashboard() {
           hint={`${Object.keys(typeCounts).length} distinct types`}
           icon={Users}
           tone="success"
+          delay={70}
         />
         <StatCard
           label="Relationships"
           value={relationships.data?.length ?? 0}
           hint="Graph edges extracted"
           icon={Network}
+          delay={140}
         />
         <StatCard
           label="Risk score"
@@ -114,11 +117,15 @@ function Dashboard() {
           hint={`${findingRows.length} open findings`}
           icon={ShieldAlert}
           tone={riskScore > 60 ? "danger" : riskScore > 25 ? "warning" : "success"}
+          delay={210}
         />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <section className="glass-card p-5 lg:col-span-2">
+        <section
+          className="glass-card rise-in hover-lift p-5 lg:col-span-2"
+          style={{ animationDelay: "260ms" }}
+        >
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-semibold">AI executive briefing</h2>
@@ -129,10 +136,11 @@ function Dashboard() {
             <Button
               size="sm"
               variant="secondary"
+              className="press"
               onClick={() => insights.mutate()}
               disabled={insights.isPending || entityRows.length === 0}
             >
-              <Sparkle className="size-4" />
+              <Sparkle className={`size-4 ${insights.isPending ? "animate-spin" : ""}`} />
               {insights.isPending ? "Analysing…" : "Generate"}
             </Button>
           </div>
@@ -142,8 +150,18 @@ function Dashboard() {
               <p className="text-danger">
                 {(insights.error as Error).message}
               </p>
+            ) : insights.isPending ? (
+              <div className="space-y-2">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="shimmer h-3 rounded-full bg-secondary"
+                    style={{ width: `${100 - i * 14}%` }}
+                  />
+                ))}
+              </div>
             ) : insights.data ? (
-              <div className="space-y-4">
+              <div className="rise-in space-y-4">
                 <div className="prose prose-invert prose-sm max-w-none">
                   <ReactMarkdown>{insights.data.executiveSummary}</ReactMarkdown>
                 </div>
@@ -153,8 +171,12 @@ function Dashboard() {
                       Top violations
                     </p>
                     <ul className="mt-2 space-y-1 text-sm">
-                      {insights.data.topViolations.map((item) => (
-                        <li key={item} className="flex gap-2">
+                      {insights.data.topViolations.map((item, i) => (
+                        <li
+                          key={item}
+                          className="rise-in flex gap-2"
+                          style={{ animationDelay: `${i * 60}ms` }}
+                        >
                           <span className="text-danger">•</span>
                           {item}
                         </li>
@@ -168,9 +190,15 @@ function Dashboard() {
                       Recommended actions
                     </p>
                     <ul className="mt-2 space-y-1 text-sm">
-                      {insights.data.recommendations.map((item) => (
-                        <li key={item} className="flex gap-2">
-                          <span className="text-primary">→</span>
+                      {insights.data.recommendations.map((item, i) => (
+                        <li
+                          key={item}
+                          className="rise-in group flex gap-2"
+                          style={{ animationDelay: `${i * 60}ms` }}
+                        >
+                          <span className="text-primary transition-transform duration-300 group-hover:translate-x-1">
+                            →
+                          </span>
                           {item}
                         </li>
                       ))}
@@ -188,23 +216,24 @@ function Dashboard() {
           </div>
         </section>
 
-        <section className="glass-card p-5">
+        <section className="glass-card rise-in hover-lift p-5" style={{ animationDelay: "320ms" }}>
           <h2 className="text-sm font-semibold">Entity mix</h2>
           <p className="text-xs text-muted-foreground">Distribution across the graph.</p>
           <div className="mt-4 space-y-3">
             {topTypes.length ? (
-              topTypes.map(([type, count]) => (
-                <div key={type}>
+              topTypes.map(([type, count], i) => (
+                <div key={type} className="rise-in" style={{ animationDelay: `${340 + i * 60}ms` }}>
                   <div className="flex items-center justify-between text-xs">
                     <span>{type}</span>
                     <span className="tabular-nums text-muted-foreground">{count}</span>
                   </div>
                   <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-secondary">
                     <div
-                      className="h-full rounded-full"
+                      className="bar-grow h-full rounded-full transition-[width] duration-700"
                       style={{
                         width: `${(count / maxType) * 100}%`,
                         backgroundColor: entityColor(type),
+                        animationDelay: `${380 + i * 70}ms`,
                       }}
                     />
                   </div>
@@ -218,11 +247,15 @@ function Dashboard() {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <section className="glass-card p-5">
+        <section className="glass-card rise-in hover-lift p-5" style={{ animationDelay: "380ms" }}>
           <h2 className="text-sm font-semibold">Latest findings</h2>
           <ul className="mt-3 space-y-3">
-            {findingRows.slice(0, 6).map((finding) => (
-              <li key={finding.id} className="rounded-lg border border-border/60 p-3">
+            {findingRows.slice(0, 6).map((finding, i) => (
+              <li
+                key={finding.id}
+                className="rise-in rounded-lg border border-border/60 p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:bg-secondary/40"
+                style={{ animationDelay: `${400 + i * 55}ms` }}
+              >
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-medium">{finding.title}</p>
                   <span
@@ -248,16 +281,17 @@ function Dashboard() {
           </ul>
         </section>
 
-        <section className="glass-card p-5">
+        <section className="glass-card rise-in hover-lift p-5" style={{ animationDelay: "440ms" }}>
           <h2 className="flex items-center gap-2 text-sm font-semibold">
             <TrendingUp className="size-4 text-primary" />
             Recent questions
           </h2>
           <ul className="mt-3 space-y-2">
-            {(questions.data ?? []).slice(0, 7).map((item) => (
+            {(questions.data ?? []).slice(0, 7).map((item, i) => (
               <li
                 key={item.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-border/60 px-3 py-2"
+                className="rise-in flex items-center justify-between gap-3 rounded-lg border border-border/60 px-3 py-2 transition-all duration-300 hover:translate-x-1 hover:border-primary/25"
+                style={{ animationDelay: `${460 + i * 45}ms` }}
               >
                 <span className="truncate text-sm">{item.question}</span>
                 <span
